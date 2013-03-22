@@ -1,0 +1,7 @@
+{
+    "name"        : "Crystal::Maiden",
+    "version"     : "*",
+    "description" : "cli util to port stuff from ecosystem to portage",
+    "depends"     : ["Panda"],
+    "source-url"  : "git://github.com/Heather/CrystalMaiden.git"
+}
