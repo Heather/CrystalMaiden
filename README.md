@@ -1,34 +1,34 @@
-Easiest way to ignore junk in your VCS folder
-=============================================
+Crystal Maiden
+==============
+
+ - work in progress
 
 ``` shell
-Currently supported : hg, git
+>>PERL6LIB=lib ./bin/cm --debug ufo
+we expect to get: 
+ --> ufo
+making ebuild for:
+"ufo" => "*"
+"Source-url" => "git://github.com/masak/ufo.git"
+"Description" => "Swoops down and creates your Perl 6 project Makefile for you"
 
-TODO :
- - multiply ignore files
+>>cat ufo-9999.ebuild
+# Copyright 1999-2013 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
 
-Usage:
-  bin/ignore [--debug] [--git] [--hg] [--all] <source>
-```
+EAPI="5"
 
-``` perl
-sub file($f,&b,*%h) {
-    given open $f, |%h {
-        .&b; .close
-    ...
-sub ignore($ifile, $pattern) {
-    my $res = find(:dir<.>, :name($ifile));
-    given $res.elems {
-        when 1 {
-            log $res[0].fmt('found single ignore file at %s');
-            if analyze( $res[0], $pattern ) {
-                log 'this file is already in ignore file';
-                }
-            else {
-                log 'adding new node to ignore file';
-                file $res[0], :a, {
-                    .say( $pattern );
-                ...
-sub MAIN($source, Bool :$debug = False, Bool :$git = False, Bool :$hg = False, Bool :$all = False) {
-    ...
+inherit git-2 ufo
+
+DESCRIPTION="Swoops down and creates your Perl 6 project Makefile for you"
+HOMEPAGE="https://perl6.org/"
+EGIT_REPO_URI="git://github.com/masak/ufo.git"
+
+LICENSE=""
+SLOT="0"
+KEYWORDS="~x86 ~amd64"
+IUSE=""
+DEPEND=""
+RDEPEND="${DEPEND}"
 ```
