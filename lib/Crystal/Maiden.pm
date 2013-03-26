@@ -80,8 +80,8 @@ sub pandainstall($dd) is export {
     my $destdir = $dd ~ %*CUSTOM_LIB<site>;
     my $r = Panda::Resources.new(srcdir => $srcdir);
     my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
-    my $p = Pies::Project.new(name => $me);
-    
+    my $p = Pies::Project.new(name => $me);    
+    $b.install($p);
     if ( './bin' ).IO.d {
         say "moving bin files to proper place";
         for dir('./bin') -> $file {
@@ -92,8 +92,6 @@ sub pandainstall($dd) is export {
             unlink $wrong;
             }
         }
-    
-    $b.install($p)
     }
 
 sub projectinfo($panda, @args, $debug) is export {
