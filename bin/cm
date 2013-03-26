@@ -11,7 +11,7 @@ sub help() {
     Crystal Maiden for Perl6
 
       - use cm help to get this message
-      - use cm list to get package list
+      - READ THE CODE
     ';
 }
 
