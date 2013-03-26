@@ -88,8 +88,7 @@ sub pandainstall($dd) is export {
             my $wrong = $destdir ~ '/bin/' ~ $file.basename;
             mkpath $dd ~ '/usr/bin/';
             my $correct = $dd ~ '/usr/bin/' ~ $file.basename;
-            $wrong.IO.copy($correct);
-            unlink $wrong;
+            run ('mv', $wrong, $correct);
             }
         }
     }
