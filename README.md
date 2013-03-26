@@ -1,5 +1,5 @@
-Crystal Maiden
-==============
+![alt text](http://www.dota2wiki.com/images/2/27/Crystal_Maiden_icon.png "CM") Crystal Maiden
+=============================================================================================
 
  - Generate ebuilds for perl6 modules using data from ecosystem
  - Process code compilation / testing / installation via eclass
