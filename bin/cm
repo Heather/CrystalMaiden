@@ -1,12 +1,11 @@
 #!/usr/bin/env perl6
 use v6;
 
-#use File::Find;
 use Panda;
 use Crystal::Maiden;
 
 my $p = '/usr/home/gentoo-perl6';
-my $destdir = 'dd';
+my $destdir = 'CRYSTAL MAIDEN';
 sub help() {
     say '
     Crystal Maiden for Perl6
@@ -15,7 +14,8 @@ sub help() {
       - use cm list to get package list
     ';
 }
-sub MAIN(*@modules, Bool :$debug = False) {
+
+sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
     my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
     my $panda = Panda.new(
         srcdir       => "$pandadir/src",
@@ -23,14 +23,26 @@ sub MAIN(*@modules, Bool :$debug = False) {
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
         );
-    if    !@modules { list(panda => $panda) }
-    elsif @modules[0] eq "help" { help() }
-    elsif @modules[0] eq "list" { list(panda => $panda) }
+    if $help { help() }
     else {
-        if $debug {
-            say 'we expect to get: ';
-                for @modules -> $m { say " --> $m"; };
+        if !@modules { list(panda => $panda) }
+        elsif @modules[0] eq "src_configure" {
+            src_configure() }
+        elsif @modules[0] eq "src_compile" {
+            pandacompile()
             }
-        projectinfo($panda, @modules, $debug);
+        elsif @modules[0] eq "src_test" {
+            run <prove -e perl6 -r t/>
+            }
+        elsif @modules[0] eq "src_install" {
+            pandainstall()
+            }
+        else {
+            if $debug {
+                say 'we expect to get: ';
+                    for @modules -> $m { say " --> $m"; };
+                }
+            projectinfo($panda, @modules, $debug);
+            }
         }
     }

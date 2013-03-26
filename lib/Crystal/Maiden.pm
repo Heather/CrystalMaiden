@@ -2,6 +2,9 @@ use v6;
 
 use Shell::Command;
 use Panda;
+use Panda::Installer;
+use Panda::Builder;
+use Panda::Resources;
 
 module Crystal::Maiden;
 
@@ -32,6 +35,10 @@ RDEPEND="${DEPEND}"
 }
 }
 
+sub src_configure() is export {
+    print %*CUSTOM_LIB<site>
+    }
+
 sub list (:$panda!, :$installed) is export {
     my $es        = $panda.ecosystem;
     my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
@@ -46,7 +53,7 @@ sub list (:$panda!, :$installed) is export {
             when 'installed'     { '[installed]' }
             when 'installed-dep' { '-dependency-' }
             default              { '' }
-		    }
+            }
 
         my $meta = $s ?? $es.project-get-saved-meta($x) !! $x.metainfo;
         my $url  = $meta<source-url> // $meta<repo-url> // 'UNKNOWN';
@@ -54,8 +61,38 @@ sub list (:$panda!, :$installed) is export {
         my $ver  = $meta<version>;
 
         printf "%-{$max-name}s  %-12s  %-{$max-ver}s  %-{$max-rev}s  %s\n",
-		    $x.name, $s, $ver, $rev, $url;
-		}
+            $x.name, $s, $ver, $rev, $url;
+            }
+    }
+ 
+sub pandacompile() is export {
+    my $me = dir('..')[0].Str;
+    my $srcdir = '..';
+    my $r = Panda::Resources.new(srcdir => $srcdir);
+    my $b = Panda::Builder.new(resources => $r);
+    my $p = Pies::Project.new(name => $me); # cwd fails here
+    $b.build($p);
+    }
+ 
+sub pandainstall() is export {
+    my $me = dir('..')[0].Str;
+    my $srcdir = '..';
+    my $destdir = %*CUSTOM_LIB<site>;
+    my $r = Panda::Resources.new(srcdir => $srcdir);
+    my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
+    my $p = Pies::Project.new(name => $me);
+    
+    if ( "$me/bin" ).IO.d {
+        say "moving bin files to proper place";
+        for dir("$me/bin") -> $file {
+            my $wrong = %*CUSTOM_LIB<site> ~~ '/bin' ~~ $file.basename;
+            my $correct = '/usr/bin' ~~ $file.basename;
+            cp($wrong, $correct);
+            rm_f ($wrong);
+            }
+        }
+    
+    $b.install($p)
     }
 
 sub projectinfo($panda, @args, $debug) is export {
@@ -66,7 +103,7 @@ sub projectinfo($panda, @args, $debug) is export {
             my $state = $panda.ecosystem.project-get-state($x);
             say 'making ebuild for:';
             say $x.name => $x.version;
-            if $debug {
+            when $debug {
                 say 'Depends on:' => $x.dependencies.Str if $x.dependencies;
                 given $state {
                     when 'installed'     {
@@ -87,8 +124,12 @@ sub projectinfo($panda, @args, $debug) is export {
                     }
                 say '';
                 }
-            #NOT READY, NEED NAME FORMATING, DEPENDIES PROCESS AND SOME MORE BUT ALREADY CAN WALK
-            my $filename = $x.name ~ '-' ~ ( $x.version eq "*" ?? '9999' !! $x.version ) ~ '.ebuild';
+            #================================================================================
+            my $filename = 
+                $x.name 
+                ~ '-' 
+                ~ ( $x.version eq "*" ?? '9999' !! $x.version ) 
+                ~ '.ebuild';
             my $ebuild = $filename eq '-' ?? $*OUT !! open $filename, :w;
             my $homepage = 
                 ($x.metainfo{'source-url'})\
@@ -102,6 +143,7 @@ sub projectinfo($panda, @args, $debug) is export {
                     .subst('$git', $x.metainfo{'source-url'})
                 );
             $ebuild.close;
+            #================================================================================
             }
         else {
             say "Project '$p' not found"
