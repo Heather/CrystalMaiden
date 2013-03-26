@@ -20,7 +20,7 @@ EAPI="5"
 inherit git-2 ufo
 
 DESCRIPTION="$description"
-HOMEPAGE="https://perl6.org/"
+HOMEPAGE="$homepage"
 EGIT_REPO_URI="$git"
 
 LICENSE=""
@@ -90,9 +90,14 @@ sub projectinfo($panda, @args, $debug) is export {
             #NOT READY, NEED NAME FORMATING, DEPENDIES PROCESS AND SOME MORE BUT ALREADY CAN WALK
             my $filename = $x.name ~ '-' ~ ( $x.version eq "*" ?? '9999' !! $x.version ) ~ '.ebuild';
             my $ebuild = $filename eq '-' ?? $*OUT !! open $filename, :w;
+            my $homepage = 
+                ($x.metainfo{'source-url'})\
+                    .subst('.git', '')\
+                    .subst('git', 'https');
             $ebuild.print(
                 ebuild_template()\
                     .subst(/^\n/, '')\
+                    .subst('$homepage', $homepage)\
                     .subst('$description', $x.metainfo{'description'})\
                     .subst('$git', $x.metainfo{'source-url'})
                 );
