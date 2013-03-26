@@ -40,7 +40,7 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
         else {
             if $debug {
                 say 'we expect to get: ';
-                    for @modules -> $m { say " --> $m"; };
+                for @modules -> $m { say " --> $m"; };
                 }
             projectinfo($panda, @modules, $debug);
             }
