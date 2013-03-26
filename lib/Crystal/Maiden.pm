@@ -82,9 +82,9 @@ sub pandainstall($dd) is export {
     my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
     my $p = Pies::Project.new(name => $me);
     
-    if ( "$me/bin" ).IO.d {
+    if ( './bin' ).IO.d {
         say "moving bin files to proper place";
-        for dir("$me/bin") -> $file {
+        for dir('./bin') -> $file {
             my $wrong = $destdir ~ '/bin' ~~ $file.basename;
             my $correct = $dd ~ '/usr/bin' ~~ $file.basename;
             cp($wrong, $correct);
