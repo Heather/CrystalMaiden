@@ -35,7 +35,7 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
             run <prove -e perl6 -r t/>
             }
         elsif @modules[0] eq "src_install" {
-            pandainstall()
+            pandainstall(@modules[1])
             }
         else {
             if $debug {

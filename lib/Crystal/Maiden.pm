@@ -70,14 +70,14 @@ sub pandacompile() is export {
     my $srcdir = '..';
     my $r = Panda::Resources.new(srcdir => $srcdir);
     my $b = Panda::Builder.new(resources => $r);
-    my $p = Pies::Project.new(name => $me); # cwd fails here
+    my $p = Pies::Project.new(name => $me);
     $b.build($p);
     }
  
-sub pandainstall() is export {
+sub pandainstall($D) is export {
     my $me = cwd.split('/')[*-1];
     my $srcdir = '..';
-    my $destdir = %*CUSTOM_LIB<site>;
+    my $destdir = $D ~~ %*CUSTOM_LIB<site>;
     my $r = Panda::Resources.new(srcdir => $srcdir);
     my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
     my $p = Pies::Project.new(name => $me);
@@ -85,8 +85,8 @@ sub pandainstall() is export {
     if ( "$me/bin" ).IO.d {
         say "moving bin files to proper place";
         for dir("$me/bin") -> $file {
-            my $wrong = %*CUSTOM_LIB<site> ~~ '/bin' ~~ $file.basename;
-            my $correct = '/usr/bin' ~~ $file.basename;
+            my $wrong = $destdir ~~ '/bin' ~~ $file.basename;
+            my $correct = $D ~~ '/usr/bin' ~~ $file.basename;
             cp($wrong, $correct);
             rm_f ($wrong);
             }
