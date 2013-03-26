@@ -13,8 +13,7 @@ sub help() {
       - use cm help to get this message
       - READ THE CODE
     ';
-}
-
+    }
 sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
     my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
     my $panda = Panda.new(
