@@ -5,7 +5,8 @@ use v6;
 use Panda;
 use Crystal::Maiden;
 
-my $destdir = "dd";
+my $p = '/usr/home/gentoo-perl6';
+my $destdir = 'dd';
 sub help() {
     say '
     Crystal Maiden for Perl6
@@ -15,10 +16,6 @@ sub help() {
     ';
 }
 sub MAIN(*@modules, Bool :$debug = False) {
-    if $debug {
-        say "we expect to get: ";
-            for @modules -> $m { say " --> $m"; };
-        }
     my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
     my $panda = Panda.new(
         srcdir       => "$pandadir/src",
@@ -26,9 +23,14 @@ sub MAIN(*@modules, Bool :$debug = False) {
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
         );
-    if    @modules[0] eq "help" { help() }
+    if    !@modules { list(panda => $panda) }
+    elsif @modules[0] eq "help" { help() }
     elsif @modules[0] eq "list" { list(panda => $panda) }
     else {
+        if $debug {
+            say 'we expect to get: ';
+                for @modules -> $m { say " --> $m"; };
+            }
         projectinfo($panda, @modules, $debug);
         }
     }
