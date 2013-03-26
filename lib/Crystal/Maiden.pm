@@ -122,7 +122,6 @@ sub projectinfo($panda, @args, $debug) is export {
                     }
                 say '';
                 }
-            #================================================================================
             my $filename = 
                 $x.name 
                 ~ '-' 
@@ -141,7 +140,6 @@ sub projectinfo($panda, @args, $debug) is export {
                     .subst('$git', $x.metainfo{'source-url'})
                 );
             $ebuild.close;
-            #================================================================================
             }
         else {
             say "Project '$p' not found"
