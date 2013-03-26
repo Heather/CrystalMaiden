@@ -85,10 +85,11 @@ sub pandainstall($dd) is export {
     if ( './bin' ).IO.d {
         say "moving bin files to proper place";
         for dir('./bin') -> $file {
-            my $wrong = $destdir ~ '/bin' ~~ $file.basename;
-            my $correct = $dd ~ '/usr/bin' ~~ $file.basename;
-            cp($wrong, $correct);
-            rm_f ($wrong);
+            my $wrong = $destdir ~ '/bin/' ~ $file.basename;
+            mkpath $dd ~ '/usr/bin/';
+            my $correct = $dd ~ '/usr/bin/' ~ $file.basename;
+            $wrong.IO.copy($correct);
+            unlink $wrong;
             }
         }
     
