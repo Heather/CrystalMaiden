@@ -1,34 +1,48 @@
 Crystal Maiden
 ==============
 
- - work in progress
+ - Generate ebuilds for perl6 modules using data from ecosystem
+ - Process code compilation / testing / installation via eclass
+ - use gentoo-perl6 overlay.
 
-``` shell
->>PERL6LIB=lib ./bin/cm --debug ufo
-we expect to get: 
- --> ufo
-making ebuild for:
-"ufo" => "*"
-"Source-url" => "git://github.com/masak/ufo.git"
-"Description" => "Swoops down and creates your Perl 6 project Makefile for you"
+``` perl
+sub help() {
+    say '
+    Crystal Maiden for Perl6
 
->>cat ufo-9999.ebuild
-# Copyright 1999-2013 Gentoo Foundation
-# Distributed under the terms of the GNU General Public License v2
-# $Header: $
-
-EAPI="5"
-
-inherit git-2 ufo
-
-DESCRIPTION="Swoops down and creates your Perl 6 project Makefile for you"
-HOMEPAGE="https://perl6.org/"
-EGIT_REPO_URI="git://github.com/masak/ufo.git"
-
-LICENSE=""
-SLOT="0"
-KEYWORDS="~x86 ~amd64"
-IUSE=""
-DEPEND=""
-RDEPEND="${DEPEND}"
+      - use cm help to get this message
+      - READ THE CODE
+    ';
+    }
+sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
+    my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
+    my $panda = Panda.new(
+        srcdir       => "$pandadir/src",
+        destdir      =>  $destdir,
+        statefile    => "$pandadir/state",
+        projectsfile => "$pandadir/projects.json"
+        );
+    if $help { help() }
+    else {
+        if !@modules { list(panda => $panda) }
+        elsif @modules[0] eq "src_configure" {
+            src_configure() }
+        elsif @modules[0] eq "src_compile" {
+            pandacompile()
+            }
+        elsif @modules[0] eq "src_test" {
+            run <prove -e perl6 -r t/>
+            }
+        elsif @modules[0] eq "src_install" {
+            pandainstall(@modules[1])
+            }
+        else {
+            if $debug {
+                say 'we expect to get: ';
+                for @modules -> $m { say " --> $m"; };
+                }
+            projectinfo($panda, @modules, $debug);
+            }
+        }
+    }
 ```
