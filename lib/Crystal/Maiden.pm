@@ -66,7 +66,7 @@ sub list (:$panda!, :$installed) is export {
     }
  
 sub pandacompile() is export {
-    my $me = dir('..')[0].Str;
+    my $me = cwd.split('/')[*-1];
     my $srcdir = '..';
     my $r = Panda::Resources.new(srcdir => $srcdir);
     my $b = Panda::Builder.new(resources => $r);
@@ -75,7 +75,7 @@ sub pandacompile() is export {
     }
  
 sub pandainstall() is export {
-    my $me = dir('..')[0].Str;
+    my $me = cwd.split('/')[*-1];
     my $srcdir = '..';
     my $destdir = %*CUSTOM_LIB<site>;
     my $r = Panda::Resources.new(srcdir => $srcdir);
