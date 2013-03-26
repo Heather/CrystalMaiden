@@ -20,7 +20,7 @@ return q{
 
 EAPI="5"
 
-inherit git-2 ufo
+inherit git-2 crystalmaiden
 
 DESCRIPTION="$description"
 HOMEPAGE="$homepage"
