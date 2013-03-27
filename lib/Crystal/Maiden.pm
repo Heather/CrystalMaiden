@@ -30,7 +30,7 @@ LICENSE=""
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
-DEPEND=""
+DEPEND="$depend"
 RDEPEND="${DEPEND}"
 }
 }
@@ -93,6 +93,9 @@ sub pandainstall($dd) is export {
         }
     }
 
+sub pformat($p) {
+    return ($p).subst("::", '').lc;
+    }
 sub projectinfo($panda, $overlay, @args) is export {
     for @args -> $p {
         my $x = $panda.ecosystem.get-project($p);
@@ -119,7 +122,7 @@ sub projectinfo($panda, $overlay, @args) is export {
                 say 'INSTALLED VERSION:';
                 .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
                 }
-            my $fnm = ($x.name).subst("::", '').lc;
+            my $fnm = pformat($x.name);
             my $pth = $overlay ~ '/dev-perl/' ~ $fnm ~ '/';
             mkpath $pth;
             my $filename =
@@ -137,7 +140,12 @@ sub projectinfo($panda, $overlay, @args) is export {
                     .subst(/^\n/, '')\
                     .subst('$homepage', $homepage)\
                     .subst('$description', $x.metainfo{'description'})\
-                    .subst('$git', $x.metainfo{'source-url'})
+                    .subst('$git', $x.metainfo{'source-url'})\
+                    .subst('$depend', 
+                        pformat($x.dependencies.Str\
+                            .split(' ')\
+                            .map({ $_ ?? "dev-perl/$_" !! () })\
+                            .join("\n") ))
                 );
             $ebuild.close;
             }
