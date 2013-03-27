@@ -5,9 +5,6 @@ use Panda;
 use Crystal::Maiden;
 use Module::Rebuild;
 
-use Config::INI;
-use Config::INI::Writer;
-
 my $p = '/usr/home/gentoo-perl6';
 my $destdir = 'CRYSTAL MAIDEN';
 sub help() {
