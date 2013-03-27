@@ -23,13 +23,12 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
         elsif @modules[0] eq "module" {
             if @modules[1] eq "list" {
                 my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
-                my $panda = Panda.new(
+                list(panda => Panda.new(
                     srcdir       => "$pandadir/src",
                     destdir      =>  $destdir,
                     statefile    => "$pandadir/state",
                     projectsfile => "$pandadir/projects.json"
-                    );
-                list(panda => $panda) }
+                    )) }
             elsif @modules[1] eq "rebuild" {
                 rebuild() }
             }
@@ -38,5 +37,11 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
                 say 'we expect to get: ';
                 for @modules -> $m { say " --> $m"; };
                 }
-            projectinfo($panda, @modules, $debug);
+            my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
+            projectinfo(Panda.new(
+                srcdir       => "$pandadir/src",
+                destdir      =>  $destdir,
+                statefile    => "$pandadir/state",
+                projectsfile => "$pandadir/projects.json"
+                ), @modules, $debug);
 ```
