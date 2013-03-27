@@ -8,5 +8,9 @@ class Module::Rebuild::Result is Cool {
     }
     
 sub rebuild() is export {
-    print %*CUSTOM_LIB<site>
-    }
+    run ('emerge'
+            ,'--oneshot'
+            ,'--keep-going'
+            ,qx/ equery d perl6 /\
+                .split(/\n/)\
+                .map({ $_ ?? "=$_" !! () }))} 
