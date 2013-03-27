@@ -5,6 +5,9 @@ use Panda;
 use Crystal::Maiden;
 use Module::Rebuild;
 
+use Config::INI;
+use Config::INI::Writer;
+
 my $p = '/usr/home/gentoo-perl6';
 my $destdir = 'CRYSTAL MAIDEN';
 sub help() {
@@ -27,7 +30,7 @@ sub help() {
         rebuild - rebuild all perl6 modules
     ';
     }
-sub MAIN(*@args, Bool :$debug = False, Bool :$help = False) {
+sub MAIN(*@args, Bool :$help = False) {
     if $help { help() }
     else {
         if !@args { help() }
@@ -54,17 +57,13 @@ sub MAIN(*@args, Bool :$debug = False, Bool :$help = False) {
                 rebuild() }
             }
         else {
-            if $debug {
-                say 'we expect to get: ';
-                for @args -> $m { say " --> $m"; };
-                }
             my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
             projectinfo(Panda.new(
                 srcdir       => "$pandadir/src",
                 destdir      =>  $destdir,
                 statefile    => "$pandadir/state",
                 projectsfile => "$pandadir/projects.json"
-                ), @args, $debug);
+                ), @args);
             }
         }
     }

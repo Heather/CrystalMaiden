@@ -93,7 +93,7 @@ sub pandainstall($dd) is export {
         }
     }
 
-sub projectinfo($panda, @args, $debug) is export {
+sub projectinfo($panda, @args) is export {
     for @args -> $p {
         my $x = $panda.ecosystem.get-project($p);
         $x = $panda.project-from-local($p) unless $x;
@@ -101,26 +101,23 @@ sub projectinfo($panda, @args, $debug) is export {
             my $state = $panda.ecosystem.project-get-state($x);
             say 'making ebuild for:';
             say $x.name => $x.version;
-            when $debug {
-                say 'Depends on:' => $x.dependencies.Str if $x.dependencies;
-                given $state {
-                    when 'installed'     {
-                        say 'State' => 'installed';
-                        }
-                    when 'installed-dep' {
-                        say 'State' => 'installed as a dependency';
-                        }
+            say 'Depends on:' => $x.dependencies.Str if $x.dependencies;
+            given $state {
+                when 'installed'     {
+                    say 'State' => 'installed';
                     }
-                for $x.metainfo.kv -> $k, $v {
-                    if $k ~~ none('version', 'name', 'depends') {
-                        say $k.ucfirst => $v;
-                        }
+                when 'installed-dep' {
+                    say 'State' => 'installed as a dependency';
                     }
-                if $state ~~ /^ 'installed' / {
-                    say 'INSTALLED VERSION:';
-                    .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
+                }
+            for $x.metainfo.kv -> $k, $v {
+                if $k ~~ none('version', 'name', 'depends') {
+                    say $k.ucfirst => $v;
                     }
-                say '';
+                }
+            if $state ~~ /^ 'installed' / {
+                say 'INSTALLED VERSION:';
+                .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
                 }
             my $filename = 
                 $x.name 
