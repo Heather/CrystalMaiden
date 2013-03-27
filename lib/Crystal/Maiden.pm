@@ -35,7 +35,7 @@ RDEPEND="${DEPEND}"
 }
 }
 
-sub src_configure() is export {
+sub printlibpath() is export {
     print %*CUSTOM_LIB<site>
     }
 

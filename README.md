@@ -6,14 +6,6 @@
  - use gentoo-perl6 overlay.
 
 ``` perl
-sub help() {
-    say '
-    Crystal Maiden for Perl6
-
-      - use cm help to get this message
-      - READ THE CODE
-    ';
-    }
 sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
     my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
     my $panda = Panda.new(
@@ -24,17 +16,24 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
         );
     if $help { help() }
     else {
-        if !@modules { list(panda => $panda) }
-        elsif @modules[0] eq "src_configure" {
-            src_configure() }
-        elsif @modules[0] eq "src_compile" {
-            pandacompile()
+        if !@modules { help() }
+        elsif @modules[0] eq "src" {
+            if !@modules[1] {  }
+            elsif @modules[1] eq "configure" {
+                printlibpath() }
+            elsif @modules[1] eq "compile" {
+                pandacompile() }
+            elsif @modules[1] eq "test" {
+                run <prove -e perl6 -r t/> }
+            elsif @modules[1] eq "install" {
+                pandainstall(@modules[2]) }
             }
-        elsif @modules[0] eq "src_test" {
-            run <prove -e perl6 -r t/>
-            }
-        elsif @modules[0] eq "src_install" {
-            pandainstall(@modules[1])
+        elsif @modules[0] eq "module" {
+            if !@modules[1] {  }
+            elsif @modules[1] eq "list" {
+                list(panda => $panda) }
+            elsif @modules[1] eq "rebuild" {
+                rebuild() }
             }
         else {
             if $debug {
@@ -42,7 +41,4 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
                 for @modules -> $m { say " --> $m"; };
                 }
             projectinfo($panda, @modules, $debug);
-            }
-        }
-    }
 ```
