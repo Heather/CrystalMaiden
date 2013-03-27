@@ -93,7 +93,7 @@ sub pandainstall($dd) is export {
         }
     }
 
-sub projectinfo($panda, @args) is export {
+sub projectinfo($panda, $overlay, @args) is export {
     for @args -> $p {
         my $x = $panda.ecosystem.get-project($p);
         $x = $panda.project-from-local($p) unless $x;
@@ -119,13 +119,16 @@ sub projectinfo($panda, @args) is export {
                 say 'INSTALLED VERSION:';
                 .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
                 }
-            my $filename = 
-                $x.name 
-                ~ '-' 
-                ~ ( $x.version eq "*" ?? '9999' !! $x.version ) 
+            my $fnm = ($x.name).subst("::", '').lc;
+            my $pth = $overlay ~ '/dev-perl/' ~ $fnm ~ '/';
+            mkpath $pth;
+            my $filename =
+                $fnm
+                ~ '-'
+                ~ ( $x.version eq "*" ?? '9999' !! $x.version )
                 ~ '.ebuild';
-            my $ebuild = $filename eq '-' ?? $*OUT !! open $filename, :w;
-            my $homepage = 
+            my $ebuild = $filename eq '-' ?? $*OUT !! open $pth ~ $filename, :w;
+            my $homepage =
                 ($x.metainfo{'source-url'})\
                     .subst('.git', '')\
                     .subst('git', 'https');

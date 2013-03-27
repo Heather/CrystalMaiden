@@ -5,8 +5,6 @@ use Panda;
 use Crystal::Maiden;
 use Module::Rebuild;
 
-my $p = '/usr/home/gentoo-perl6';
-my $destdir = 'CRYSTAL MAIDEN';
 sub help() {
     say '
     Crystal Maiden for Perl6 v.0.0.1
@@ -27,7 +25,7 @@ sub help() {
         rebuild - rebuild all perl6 modules
     ';
     }
-sub MAIN(*@args, Bool :$help = False) {
+sub MAIN(*@args, Bool :$help = False, Str :$overlay is copy) {
     if $help { help() }
     else {
         if !@args { help() }
@@ -46,7 +44,7 @@ sub MAIN(*@args, Bool :$help = False) {
                 my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
                 list(panda => Panda.new(
                     srcdir       => "$pandadir/src",
-                    destdir      =>  $destdir,
+                    destdir      =>  'CRYSTAL MAIDEN',
                     statefile    => "$pandadir/state",
                     projectsfile => "$pandadir/projects.json"
                     )) }
@@ -55,12 +53,15 @@ sub MAIN(*@args, Bool :$help = False) {
             }
         else {
             my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
+            unless $overlay.defined {
+                $overlay = '/usr/home/gentoo-perl6'
+                }
             projectinfo(Panda.new(
                 srcdir       => "$pandadir/src",
-                destdir      =>  $destdir,
+                destdir      =>  'CRYSTAL MAIDEN',
                 statefile    => "$pandadir/state",
                 projectsfile => "$pandadir/projects.json"
-                ), @args);
+                ), $overlay, @args);
             }
         }
     }

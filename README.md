@@ -6,7 +6,7 @@
  - use gentoo-perl6 overlay.
 
 ``` perl
-sub MAIN(*@args, Bool :$debug = False, Bool :$help = False) {
+sub MAIN(*@args, Bool :$help = False, Str :$overlay is copy) {
     if $help { help() }
     else {
         if !@args { help() }
@@ -25,7 +25,7 @@ sub MAIN(*@args, Bool :$debug = False, Bool :$help = False) {
                 my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
                 list(panda => Panda.new(
                     srcdir       => "$pandadir/src",
-                    destdir      =>  $destdir,
+                    destdir      =>  'CRYSTAL MAIDEN',
                     statefile    => "$pandadir/state",
                     projectsfile => "$pandadir/projects.json"
                     )) }
@@ -33,15 +33,14 @@ sub MAIN(*@args, Bool :$debug = False, Bool :$help = False) {
                 rebuild() }
             }
         else {
-            if $debug {
-                say 'we expect to get: ';
-                for @args -> $m { say " --> $m"; };
-                }
             my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
+            unless $overlay.defined {
+                $overlay = '/usr/home/gentoo-perl6'
+                }
             projectinfo(Panda.new(
                 srcdir       => "$pandadir/src",
-                destdir      =>  $destdir,
+                destdir      =>  'CRYSTAL MAIDEN',
                 statefile    => "$pandadir/state",
                 projectsfile => "$pandadir/projects.json"
-                ), @args, $debug);
+                ), $overlay, @args);
 ```
