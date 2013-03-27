@@ -6,22 +6,22 @@
  - use gentoo-perl6 overlay.
 
 ``` perl
-sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
+sub MAIN(*@args, Bool :$debug = False, Bool :$help = False) {
     if $help { help() }
     else {
-        if !@modules { help() }
-        elsif @modules[0] eq "src" {
-            if @modules[1] eq "configure" {
+        if !@args { help() }
+        elsif @args[0] eq "src" {
+            if @args[1] eq "configure" {
                 printlibpath() }
-            elsif @modules[1] eq "compile" {
+            elsif @args[1] eq "compile" {
                 pandacompile() }
-            elsif @modules[1] eq "test" {
+            elsif @args[1] eq "test" {
                 run <prove -e perl6 -r t/> }
-            elsif @modules[1] eq "install" {
-                pandainstall(@modules[2]) }
+            elsif @args[1] eq "install" {
+                pandainstall(@args[2]) }
             }
-        elsif @modules[0] eq "module" {
-            if @modules[1] eq "list" {
+        elsif @args[0] eq "module" {
+            if @args[1] eq "list" {
                 my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
                 list(panda => Panda.new(
                     srcdir       => "$pandadir/src",
@@ -29,13 +29,13 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
                     statefile    => "$pandadir/state",
                     projectsfile => "$pandadir/projects.json"
                     )) }
-            elsif @modules[1] eq "rebuild" {
+            elsif @args[1] eq "rebuild" {
                 rebuild() }
             }
         else {
             if $debug {
                 say 'we expect to get: ';
-                for @modules -> $m { say " --> $m"; };
+                for @args -> $m { say " --> $m"; };
                 }
             my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
             projectinfo(Panda.new(
@@ -43,5 +43,5 @@ sub MAIN(*@modules, Bool :$debug = False, Bool :$help = False) {
                 destdir      =>  $destdir,
                 statefile    => "$pandadir/state",
                 projectsfile => "$pandadir/projects.json"
-                ), @modules, $debug);
+                ), @args, $debug);
 ```
