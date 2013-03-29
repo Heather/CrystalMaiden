@@ -5,28 +5,32 @@ use Panda;
 use Crystal::Maiden;
 use Module::Rebuild;
 
+sub version() {
+    say 'Crystal Maiden for Perl6 v.0.0.1' }
 sub help() {
+    print '
+    ';
+    version();
     say '
-    Crystal Maiden for Perl6 v.0.0.1
-
-      - cm --help to get this message
+      --help : to get this message
       
-      - cm <packagename>
+      - <packagename>
         Will generate Gentoo ebuild for package
       
-      - cm src
-        configure - prints default install path
-        compile - compile to blib
-        test - run tests with prove
-        install - install package
+      - src:
+        src configure - prints default install path
+        src compile - compile to blib
+        src test - run tests with prove
+        src install - install package
         
-      - module
-        list - list all modules
-        rebuild - rebuild all perl6 modules
+      - module:
+        module list - list all modules
+        module rebuild - rebuild all perl6 modules
     ';
     }
-sub MAIN(*@args, Bool :$help = False, Str :$overlay is copy) {
+sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is copy) {
     if $help { help() }
+    elsif $version { version() }
     else {
         if !@args { help() }
         elsif @args[0] eq "src" {
