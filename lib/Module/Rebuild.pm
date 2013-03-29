@@ -4,8 +4,7 @@ use Shell::Command;
 
 module Module::Rebuild;
 
-class Module::Rebuild::Result is Cool {
-    }
+class Module::Rebuild::Result is Cool { }
     
 sub rebuild() is export {
     run ('emerge'

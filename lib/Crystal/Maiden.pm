@@ -9,8 +9,7 @@ use Panda::Resources;
 module Crystal::Maiden;
 
 class Crystal::Maiden::Result is Cool {
-    has $.panda;
-    }
+    has $.panda; }
 
 sub ebuild_template() is export {
 return q{
@@ -32,12 +31,10 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 DEPEND="$depend"
 RDEPEND="${DEPEND}"
-}
-}
+} }
 
 sub printlibpath() is export {
-    print %*CUSTOM_LIB<site>
-    }
+    print %*CUSTOM_LIB<site> }
 
 sub list (:$panda!, :$installed) is export {
     my $es        = $panda.ecosystem;
@@ -61,9 +58,7 @@ sub list (:$panda!, :$installed) is export {
         my $ver  = $meta<version>;
 
         printf "%-{$max-name}s  %-12s  %-{$max-ver}s  %-{$max-rev}s  %s\n",
-            $x.name, $s, $ver, $rev, $url;
-            }
-    }
+            $x.name, $s, $ver, $rev, $url; } }
  
 sub pandacompile() is export {
     my $me = cwd.split('/')[*-1];
@@ -73,7 +68,6 @@ sub pandacompile() is export {
     my $p = Pies::Project.new(name => $me);
     $b.build($p);
     }
- 
 sub pandainstall($dd) is export {
     my $me = cwd.split('/')[*-1];
     my $srcdir = '..';
@@ -89,15 +83,21 @@ sub pandainstall($dd) is export {
             mkpath $dd ~ '/usr/bin/';
             my $correct = $dd ~ '/usr/bin/' ~ $file.basename;
             run ('mv', $wrong, $correct);
-            }
-        }
-    }
-
+            } } }
 sub pformat($p) {
-    return ($p).subst("::", '').lc;
+    return ($p).subst("::", '').lc; 
     }
 sub projectinfo($panda, $overlay, @args) is export {
-    for @args -> $p {
+    for @args -> $pkg {
+        my $c;
+        my $p;
+        if $pkg ~~ /\// {
+            my $cp = $$pkg.split('/');
+            $c = $cp[0] ~ '/';
+            $p = $cp[1]; }
+        else { 
+            $c = 'dev-perl/';
+            $p = $pkg; }
         my $x = $panda.ecosystem.get-project($p);
         $x = $panda.project-from-local($p) unless $x;
         if $x {
@@ -107,23 +107,20 @@ sub projectinfo($panda, $overlay, @args) is export {
             say 'Depends on:' => $x.dependencies.Str if $x.dependencies;
             given $state {
                 when 'installed'     {
-                    say 'State' => 'installed';
-                    }
+                    say 'State' => 'installed'; }
                 when 'installed-dep' {
-                    say 'State' => 'installed as a dependency';
-                    }
+                    say 'State' => 'installed as a dependency'; }
                 }
             for $x.metainfo.kv -> $k, $v {
                 if $k ~~ none('version', 'name', 'depends') {
                     say $k.ucfirst => $v;
-                    }
-                }
+                    } }
             if $state ~~ /^ 'installed' / {
                 say 'INSTALLED VERSION:';
                 .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
                 }
             my $fnm = pformat($x.name);
-            my $pth = $overlay ~ '/dev-perl/' ~ $fnm ~ '/';
+            my $pth = $overlay ~ '/' ~ $c ~ $fnm ~ '/';
             mkpath $pth;
             my $filename =
                 $fnm
@@ -149,8 +146,5 @@ sub projectinfo($panda, $overlay, @args) is export {
                 );
             $ebuild.close;
             }
-        else {
-            say "Project '$p' not found"
-            }
-        }
-    }
+        else { say "Project '$p' not found" }
+        } }
