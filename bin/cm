@@ -42,9 +42,7 @@ sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is c
                     } }
             else { help() } }
         elsif @args[0] eq "src" {
-            if @args[1] eq "configure" {
-                printlibpath() }
-            elsif @args[1] eq "compile" {
+            if @args[1] eq "compile" {
                 pandacompile() }
             elsif @args[1] eq "test" {
                 run <prove -e perl6 -r t/> }

@@ -33,9 +33,6 @@ DEPEND="$depend"
 RDEPEND="${DEPEND}"
 } }
 
-sub printlibpath() is export {
-    print %*CUSTOM_LIB<site> }
-
 sub list (:$panda!, :$installed) is export {
     my $es        = $panda.ecosystem;
     my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
