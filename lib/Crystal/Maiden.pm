@@ -19,7 +19,7 @@ return q{
 
 EAPI="5"
 
-inherit git-2 crystalmaiden
+inherit git-2 perl6 crystalmaiden
 
 DESCRIPTION="$description"
 HOMEPAGE="$homepage"
