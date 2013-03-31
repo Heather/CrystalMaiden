@@ -20,7 +20,6 @@ sub help() {
         Will generate Gentoo ebuild for package
       
       - src:
-        src configure - prints default install path
         src compile - compile to blib
         src test - run tests with prove
         src install - install package
