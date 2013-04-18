@@ -3,10 +3,9 @@ use v6;
 
 use Panda;
 use Crystal::Maiden;
-use Shell::Command;
 
 sub version() {
-    say 'Crystal Maiden for Perl6 v.0.0.3' }
+    say 'Crystal Maiden for Perl6 v.0.0.4' }
 sub help() {
     print '
     ';
@@ -60,14 +59,9 @@ sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is c
                         projectsfile => "$pandadir/projects.json"
                         )) } }
             elsif @args[1] eq "rebuild" {
-                if $*OS eq 'MSWin32' { say 'Not supported yet' }
-                else {  run ('emerge'
-                        ,'--oneshot'
-                        ,'--keep-going'
-                        ,qx/ equery d perl6 /\
-                            .split(/\n/)\
-                            .map({ $_ ?? "=$_" !! () })) } }
-             }
+                if $*OS eq 'MSWin32' { say 'What?' }
+                else {  run ('perl6-module-rebuild') } 
+                } }
         else {
             my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
             if $overlay.defined {
