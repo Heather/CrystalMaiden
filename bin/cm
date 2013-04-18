@@ -3,10 +3,10 @@ use v6;
 
 use Panda;
 use Crystal::Maiden;
-use Module::Rebuild;
+use Shell::Command;
 
 sub version() {
-    say 'Crystal Maiden for Perl6 v.0.0.2' }
+    say 'Crystal Maiden for Perl6 v.0.0.3' }
 sub help() {
     print '
     ';
@@ -15,15 +15,15 @@ sub help() {
       --help : to get this message
       --version : to get version
       --overlay=<overlay> : to set perl6 overlay
-      
+
       - <packagename>
         Will generate Gentoo ebuild for package
-      
+
       - src:
         src compile - compile to blib
         src test - run tests with prove
         src install - install package
-        
+
       - module:
         module list - list all modules
         module rebuild - rebuild all perl6 modules
@@ -60,9 +60,14 @@ sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is c
                         projectsfile => "$pandadir/projects.json"
                         )) } }
             elsif @args[1] eq "rebuild" {
-				if $*OS eq 'MSWin32' { say 'Not supported yet' }
-                else { rebuild() } }
-            }
+                if $*OS eq 'MSWin32' { say 'Not supported yet' }
+                else {  run ('emerge'
+                        ,'--oneshot'
+                        ,'--keep-going'
+                        ,qx/ equery d perl6 /\
+                            .split(/\n/)\
+                            .map({ $_ ?? "=$_" !! () })) } }
+             }
         else {
             my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
             if $overlay.defined {
