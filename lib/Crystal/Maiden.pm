@@ -75,13 +75,19 @@ sub pandacompile() is export {
     #$b.build($p);
     }
 sub pandainstall($dd) is export {
-    my $me = cwd.split('/')[*-1];
+    # for Panda 2:
     my $srcdir = '..';
     my $destdir = $dd ~ %*CUSTOM_LIB<site>;
-    my $r = Panda::Resources.new(srcdir => $srcdir);
-    my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
-    my $p = Pies::Project.new(name => $me);    
-    $b.install($p);
+    Panda::Installer.install($srcdir, $destdir);
+
+    # for Panda1:
+    #my $me = cwd.split('/')[*-1];
+    #my $srcdir = '..';
+    #my $destdir = $dd ~ %*CUSTOM_LIB<site>;
+    #my $r = Panda::Resources.new(srcdir => $srcdir);
+    #my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
+    #my $p = Pies::Project.new(name => $me);    
+    #$b.install($p);
     if ( './bin' ).IO.d {
         say "moving bin files to proper place";
         for dir('./bin') -> $file {
@@ -89,7 +95,8 @@ sub pandainstall($dd) is export {
             mkpath $dd ~ '/usr/bin/';
             my $correct = $dd ~ '/usr/bin/' ~ $file.basename;
             run ('mv', $wrong, $correct);
-            } } }
+            } } 
+    }
 sub pformat($p) {
     return ($p).subst("::", '').lc; 
     }
