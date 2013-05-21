@@ -1,10 +1,13 @@
+#!/usr/bin/env perl6
 use v6;
 
 use Shell::Command;
 use Panda;
+
 use Panda::Installer;
 use Panda::Builder;
-use Panda::Resources;
+use Panda::Ecosystem;
+use Panda::Project;
 
 module Crystal::Maiden;
 
@@ -36,7 +39,9 @@ RDEPEND="${DEPEND}"
 sub list (:$panda!, :$installed) is export {
     my $es        = $panda.ecosystem;
     my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
-
+       @projects .= grep({ $es.project-get-state($_) ne Panda::Project::State::absent })
+                    if $installed;
+                    
     my @saved     = @projects.map({ $es.project-get-saved-meta($_) || {} });
     my $max-name  = @projects».name».chars.max;
     my $max-ver   = @projects».version».chars.max;
