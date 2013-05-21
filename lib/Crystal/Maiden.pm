@@ -76,7 +76,7 @@ sub pandacompile() is export {
     }
 sub pandainstall($dd) is export {
     # for Panda 2:
-    my $srcdir = '..';
+    my $srcdir = '.';
     my $destdir = $dd ~ %*CUSTOM_LIB<site>;
     Panda::Installer.install($srcdir, $destdir);
 
