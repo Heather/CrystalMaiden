@@ -5,7 +5,7 @@ use Panda;
 use Crystal::Maiden;
 
 sub version() {
-    say 'Crystal Maiden for Perl6 v.0.0.4' }
+    say 'Crystal Maiden for Perl6 v.0.0.5' }
 sub help() {
     print '
     ';
