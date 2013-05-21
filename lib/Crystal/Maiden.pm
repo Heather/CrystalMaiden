@@ -63,13 +63,16 @@ sub list (:$panda!, :$installed) is export {
             $x.name, $s, $ver, $rev, $url; } }
  
 sub pandacompile() is export {
+    # for Panda2:
+    Panda::Builder.build('.');
+    
+    # for Panda1:
     #my $me = cwd.split('/')[*-1];
     #my $srcdir = '..';
     #my $r = Panda::Resources.new(srcdir => $srcdir);
     #my $b = Panda::Builder.new(resources => $r);
     #my $p = Pies::Project.new(name => $me);
     #$b.build($p);
-    Panda::Builder.build('.');
     }
 sub pandainstall($dd) is export {
     my $me = cwd.split('/')[*-1];
