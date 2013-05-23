@@ -8,6 +8,7 @@ use Panda::Installer;
 use Panda::Builder;
 use Panda::Ecosystem;
 use Panda::Project;
+use Panda::App;
 
 module Crystal::Maiden;
 
@@ -36,58 +37,14 @@ DEPEND="$depend"
 RDEPEND="${DEPEND}"
 } }
 
-sub list (:$panda!, :$installed) is export {
-    my $es        = $panda.ecosystem;
-    my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
-       @projects .= grep({ $es.project-get-state($_) ne Panda::Project::State::absent })
-                    if $installed;
-                    
-    my @saved     = @projects.map({ $es.project-get-saved-meta($_) || {} });
-    my $max-name  = @projects».name».chars.max;
-    my $max-ver   = @projects».version».chars.max;
-    my $max-rev   = @saved.map({ $_<source-revision> // '?'})».chars.max;
-
-    for @projects -> $x {
-        my $s = do given $es.project-get-state($x) {
-            when 'installed'     { '[installed]' }
-            when 'installed-dep' { '-dependency-' }
-            default              { '' }
-            }
-
-        my $meta = $s ?? $es.project-get-saved-meta($x) !! $x.metainfo;
-        my $url  = $meta<source-url> // $meta<repo-url> // 'UNKNOWN';
-        my $rev  = $meta<source-revision> // '?';
-        my $ver  = $meta<version>;
-
-        printf "%-{$max-name}s  %-12s  %-{$max-ver}s  %-{$max-rev}s  %s\n",
-            $x.name, $s, $ver, $rev, $url; } }
- 
+sub list (:$panda!, :$installed, :$verbose) is export {
+    listprojects($panda, :$installed, :$verbose); }
 sub pandacompile() is export {
-    # for Panda2:
-    Panda::Builder.build('.');
-    
-    # for Panda1:
-    #my $me = cwd.split('/')[*-1];
-    #my $srcdir = '..';
-    #my $r = Panda::Resources.new(srcdir => $srcdir);
-    #my $b = Panda::Builder.new(resources => $r);
-    #my $p = Pies::Project.new(name => $me);
-    #$b.build($p);
-    }
+    Panda::Builder.build('.'); }
 sub pandainstall($dd) is export {
-    # for Panda 2:
     my $srcdir = '.';
     my $destdir = $dd ~ %*CUSTOM_LIB<site>;
     Panda::Installer.install($srcdir, $destdir);
-
-    # for Panda1:
-    #my $me = cwd.split('/')[*-1];
-    #my $srcdir = '..';
-    #my $destdir = $dd ~ %*CUSTOM_LIB<site>;
-    #my $r = Panda::Resources.new(srcdir => $srcdir);
-    #my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
-    #my $p = Pies::Project.new(name => $me);    
-    #$b.install($p);
     if ( './bin' ).IO.d {
         say "moving bin files to proper place";
         for dir('./bin') -> $file {
@@ -98,8 +55,7 @@ sub pandainstall($dd) is export {
             } } 
     }
 sub pformat($p) {
-    return ($p).subst("::", '').lc; 
-    }
+    return ($p).subst("::", '').lc;  }
 sub projectinfo($panda, $overlay, @args) is export {
     for @args -> $pkg {
         my $c;
