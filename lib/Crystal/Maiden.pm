@@ -37,7 +37,7 @@ DEPEND="$depend"
 RDEPEND="${DEPEND}"
 } }
 
-sub list (:$panda!, :$installed, :$verbose) is export {
+sub list (:$panda!, Bool :$installed, Bool :$verbose) is export {
     listprojects($panda, :$installed, :$verbose); }
 sub pandacompile() is export {
     Panda::Builder.build('.'); }
@@ -56,7 +56,7 @@ sub pandainstall($dd) is export {
     }
 sub pformat($p) {
     return ($p).subst("::", '').lc;  }
-sub projectinfo($panda, $overlay, @args) is export {
+sub info($panda, $overlay, @args) is export {
     for @args -> $pkg {
         my $c;
         my $p;

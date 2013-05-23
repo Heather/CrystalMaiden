@@ -2,6 +2,9 @@
 use v6;
 
 use Panda;
+use Panda::Ecosystem;
+use Panda::App;
+
 use Crystal::Maiden;
 
 sub version() {
@@ -52,12 +55,11 @@ sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is c
                 my $pandadir = %*CUSTOM_LIB<site> ~ '/panda';
                 if $*OS eq 'MSWin32' { say 'Fetch method fails for Windows' }
                 else {
-                    list(panda => Panda.new(
-                        srcdir       => "$pandadir/src",
-                        destdir      =>  'CRYSTAL MAIDEN',
+                    my $ecosystem = Panda::Ecosystem.new(
                         statefile    => "$pandadir/state",
-                        projectsfile => "$pandadir/projects.json"
-                        )) } }
+                        projectsfile => "$pandadir/projects.json",
+                    );
+                    list(panda => Panda.new(:$ecosystem)) } }
             elsif @args[1] eq "rebuild" {
                 if $*OS eq 'MSWin32' { say 'What?' }
                 else {  run ('perl6-module-rebuild') } 
@@ -79,10 +81,9 @@ sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is c
                 }
                 if $*OS eq 'MSWin32' { say 'Fetch method fails for Windows' }
                 else {
-                    projectinfo(Panda.new(
-                        srcdir       => "$pandadir/src",
-                        destdir      =>  'CRYSTAL MAIDEN',
+                    my $ecosystem = Panda::Ecosystem.new(
                         statefile    => "$pandadir/state",
-                        projectsfile => "$pandadir/projects.json"
-                        ), $overlay, @args); }
+                        projectsfile => "$pandadir/projects.json",
+                    );
+                    info(Panda.new(:$ecosystem), $overlay, @args); }
             } } }
