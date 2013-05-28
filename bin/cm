@@ -77,7 +77,7 @@ sub MAIN(*@args, Bool :$version = False, Bool :$help = False, Str :$overlay is c
                         $overlay = .lines[0];
                         .close;
                         } }
-                else { $overlay = '/usr/home/gentoo-perl6' }
+                else { $overlay = '.' }
                 }
                 if $*OS eq 'MSWin32' { say 'Fetch method fails for Windows' }
                 else {
